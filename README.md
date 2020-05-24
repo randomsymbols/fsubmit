@@ -9,7 +9,7 @@ If you hardcode the other filds' values into your cUrl request, what if the form
 
 To keep you code adoptable to the changes of the form, you will have to download the form as is first, parse its fileds and values, change/add values to the right fields and submit it with cUrl. 
 
-But it causes a lot of questions if you do not know how HTML forms work. For example, if there is a select tag with several options, which one will be submitted as the value for the field if none is selected? And what if the option tag has no the value attribute?
+But it causes a lot of questions if you do not know how HTML forms work. For example, if there is a select tag with several options, which one will be submitted as the value for the field if none is selected? And what if the option tag has no value attribute?
 
 An Internet browser does the job for us when we submit a form. We do not have to borther about hidden fields or any other fields at all. The library is created to provide the same functionality for API.
 
