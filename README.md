@@ -22,7 +22,7 @@ composer require randomsymbols/fsubmit
 ```
 
 If installed manually, make sure you install the dependencies also:
-1. [PHP Simple HTML DOM Parser](https://simplehtmldom.sourceforge.io/)
+1. [PHP Simple HTML DOM Parser](https://github.com/voku/simple_html_dom)
 2. [phpUri](https://github.com/monkeysuffrage/phpuri)
 
 Usage
