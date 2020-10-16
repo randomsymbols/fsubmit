@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Fsubmit;
 
-use http\Exception\BadUrlException;
+use voku\helper\HtmlDomParser;
 
 /**
  * Class Form
@@ -116,7 +116,6 @@ final class Form
     /**
      * @param array $curlOpts
      * @return array
-     * @throws HttpResponseException
      */
     public function submit(array $curlOpts = []): array
     {
@@ -140,13 +139,13 @@ final class Form
      * @param string $url
      * @param array $curlOpts
      * @return array
-     * @throws BadUrlException
-     * @throws HttpResponseException
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
     private static function httpRequest(string $url, array $curlOpts): array
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new BadUrlException('Cannot send HTTP requiest, URL is not valid.');
+            throw new InvalidArgumentException('Cannot send HTTP requiest, URL is not valid.');
         }
 
         $curlHandle = curl_init($url);
@@ -158,8 +157,8 @@ final class Form
         curl_close($curlHandle);
 
         if ($errorMessage) {
-            throw new HttpResponseException(
-                "Cannot send HTTP requiest, cUrl returned error: $errorMessage cUrl error number: $errorNumber."
+            throw new RuntimeException(
+                "Cannot send HTTP requiest, cUrl returned error: $errorMessage cUrl error number: $errorNumber.",
             );
         }
 
@@ -179,7 +178,7 @@ final class Form
     {
         $dom = self::loadDom($html);
         $form = self::getForm($dom, $id);
-        $action = self::parseAction($form);
+        $action = self::parseAction($form, $url);
         $method = $form->method ?? 'GET';
         $enctype = $form->enctype ?? 'application/x-www-form-urlencoded';
         $params = self::parseParams($form);
@@ -192,10 +191,9 @@ final class Form
         ];
     }
 
-    private static function loadDom(string $html): simple_html_dom
+    private static function loadDom(string $html): HtmlDomParser
     {
-        $dom = new simple_html_dom();
-        $dom->load($html);
+        $dom = HtmlDomParser::str_get_html($html);
 
         if (!$dom) {
             throw new RuntimeException('Cannot load DOM, cannot parse HTML string to object.');
@@ -221,7 +219,7 @@ final class Form
         return $form;
     }
 
-    private static function parseAction($form): string
+    private static function parseAction($form, $url): string
     {
         $action = $form->action ?? NULL;
 
@@ -235,7 +233,7 @@ final class Form
         return !filter_var($action, FILTER_VALIDATE_URL) ? phpUri::parse($url)->join($action) : $url;
     }
 
-    private static function parseParams($form):array
+    private static function parseParams($form): array
     {
         $params = [];
         $elements = [];
