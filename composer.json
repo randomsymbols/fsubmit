@@ -1,17 +1,27 @@
 {
     "name": "randomsymbols/fsubmit",
-    "description": "The PHP library for submitting HTML forms",
+    "description": "Submit HTML forms from PHP",
     "homepage": "https://github.com/randomsymbols/fsubmit",
     "type": "library",
     "minimum-stability": "dev",
     "require": {
         "pguardiario/phpuri": "^1.0",
-        "simplehtmldom/simplehtmldom": "^2"
+        "simplehtmldom/simplehtmldom": "^2",
+        "ext-curl": "*",
+        "ext-http": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5@dev"
     },
     "autoload": {
-        "files": [
-            "Fsubmit.php"
-        ]
+        "psr-4": {
+            "Fsubmit\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Fsubmit\\Tests\\": "tests/"
+        }
     },
     "license": "LGPL-3.0-or-later"
 }
