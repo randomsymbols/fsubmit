@@ -300,7 +300,7 @@ final class Form
                     }
 
                     if (
-                        !$first &&
+                        !isset($first) &&
                         !$option->disabled &&
                         !$option->parent()->disabled
                     ) {
