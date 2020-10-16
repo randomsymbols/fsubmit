@@ -202,7 +202,7 @@ final class Form
         return $dom;
     }
 
-    private static function getForm($dom, array $id)
+    private static function getForm(HtmlDomParser $dom, array $id)
     {
         if ('index' === $id['type']) {
             $form = $dom->find('form', $id['value']);
@@ -219,7 +219,7 @@ final class Form
         return $form;
     }
 
-    private static function parseAction(string $form, string $url): string
+    private static function parseAction($form, string $url): string
     {
         $action = $form->action ?? '';
 
