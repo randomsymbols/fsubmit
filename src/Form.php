@@ -11,7 +11,7 @@ use http\Exception\BadUrlException;
  * unused fields to submit are automatically added from the form.
  *
  */
-class Form
+final class Form
 {
     private const DEFAULT_CURL_OPTS = [
         CURLOPT_RETURNTRANSFER => 1, // Return the transfer as a string instead of printing it to output.
@@ -159,7 +159,7 @@ class Form
 
         if ($errorMessage) {
             throw new HttpResponseException(
-                "Cannot send HTTP requiest, cUrl error message: $errorMessage cUrl error number: $errorNumber."
+                "Cannot send HTTP requiest, cUrl returned error: $errorMessage cUrl error number: $errorNumber."
             );
         }
 
@@ -215,7 +215,7 @@ class Form
         }
 
         if (!isset($form)) {
-            throw new RuntimeException('No form found in the provided HTML.');
+            throw new RuntimeException('Cannot get form from DOM, no form found in the provided HTML.');
         }
 
         return $form;
@@ -229,7 +229,7 @@ class Form
             !$url &&
             (!$form->action || '' === $form->action || !filter_var($action, FILTER_VALIDATE_URL))
         ) {
-            throw new InvalidArgumentException('Cannot set form action');
+            throw new InvalidArgumentException('Cannot set form action, URL is not provided.');
         }
 
         return !filter_var($action, FILTER_VALIDATE_URL) ? phpUri::parse($url)->join($action) : $url;
