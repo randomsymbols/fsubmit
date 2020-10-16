@@ -146,7 +146,7 @@ class Form
     private static function httpRequest(string $url, array $curlOpts): array
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new BadUrlException('Cannot download HTML form, URL is not valid.');
+            throw new BadUrlException('Cannot send HTTP requiest, URL is not valid.');
         }
 
         $curlHandle = curl_init($url);
@@ -159,7 +159,7 @@ class Form
 
         if ($errorMessage) {
             throw new HttpResponseException(
-                "Cannot download HTML form, cUrl error message: $errorMessage cUrl error number: $errorNumber."
+                "Cannot send HTTP requiest, cUrl error message: $errorMessage cUrl error number: $errorNumber."
             );
         }
 
@@ -177,13 +177,35 @@ class Form
      */
     private static function parse(string $html, array $id, string $url = NULL): array
     {
+        $dom = self::loadDom($html);
+        $form = self::getForm($dom, $id);
+        $action = self::parseAction($form);
+        $method = $form->method ?? 'GET';
+        $enctype = $form->enctype ?? 'application/x-www-form-urlencoded';
+        $params = self::parseParams($form);
+
+        return [
+            'action' => $action,
+            'method' => $method,
+            'enctype' => $enctype,
+            'params' => $params,
+        ];
+    }
+
+    private static function loadDom(string $html): simple_html_dom
+    {
         $dom = new simple_html_dom();
         $dom->load($html);
 
         if (!$dom) {
-            throw new RuntimeException('Cannot load DOM.');
+            throw new RuntimeException('Cannot load DOM, cannot parse HTML string to object.');
         }
 
+        return $dom;
+    }
+
+    private static function getForm($dom, array $id)
+    {
         if ('index' === $id['type']) {
             $form = $dom->find('form', $id['value']);
         } elseif ('id' === $id['type']) {
@@ -193,9 +215,14 @@ class Form
         }
 
         if (!isset($form)) {
-            throw new RuntimeException('No form found in the provided HTML');
+            throw new RuntimeException('No form found in the provided HTML.');
         }
 
+        return $form;
+    }
+
+    private static function parseAction($form): string
+    {
         $action = $form->action ?? NULL;
 
         if (
@@ -205,12 +232,13 @@ class Form
             throw new InvalidArgumentException('Cannot set form action');
         }
 
-        $action = !filter_var($action, FILTER_VALIDATE_URL) ? phpUri::parse($url)->join($action) : $url;
+        return !filter_var($action, FILTER_VALIDATE_URL) ? phpUri::parse($url)->join($action) : $url;
+    }
 
-        $method = $form->method ?? 'GET';
-        $enctype = $form->enctype ?? 'application/x-www-form-urlencoded';
-
+    private static function parseParams($form):array
+    {
         $params = [];
+        $elements = [];
 
         $elements = isset($form->id) && '' !== $form->id ?
             array_merge(
@@ -284,11 +312,6 @@ class Form
             }
         }
 
-        return [
-            'action' => $action,
-            'method' => $method,
-            'enctype' => $enctype,
-            'params' => $params,
-        ];
+        return $params;
     }
 }
