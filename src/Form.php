@@ -308,7 +308,8 @@ final class Form
                     }
                 }
 
-                $params[$name] = $selected ?? $first;
+                $value = $selected ?? $first;
+                $params[$name] = $value ?? '';
             }
         }
 
