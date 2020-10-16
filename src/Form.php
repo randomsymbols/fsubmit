@@ -164,7 +164,7 @@ final class Form
 
         return [
             'content' => $response,
-            'header' => $headers,
+            'headers' => $headers,
         ];
     }
 
@@ -219,18 +219,19 @@ final class Form
         return $form;
     }
 
-    private static function parseAction($form, $url): string
+    private static function parseAction(string $form, string $url): string
     {
-        $action = $form->action ?? NULL;
+        $action = $form->action ?? '';
 
-        if (
-            !$url &&
-            (!$form->action || '' === $form->action || !filter_var($action, FILTER_VALIDATE_URL))
-        ) {
+        if ('' === $action) {
+            return $url;
+        }
+
+        if (!$url && !filter_var($action, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('Cannot set form action, URL is not provided.');
         }
 
-        return !filter_var($action, FILTER_VALIDATE_URL) ? phpUri::parse($url)->join($action) : $url;
+        return filter_var($action, FILTER_VALIDATE_URL) ? $action : self::actionToUrl($action, $url);
     }
 
     private static function parseParams($form): array
@@ -312,5 +313,23 @@ final class Form
         }
 
         return $params;
+    }
+
+    private static function actionToUrl(string $action, string $url): string
+    {
+        if (filter_var($action, FILTER_VALIDATE_URL)) {
+            return $action;
+        }
+
+        $parsed = parse_url($url);
+        unset($parsed['query'], $parsed['fragment']);
+
+        if (0 === strpos($url, '/')) {
+            $parsed['query'] = $action;
+        }
+
+        $parsed['query'] .= $action;
+
+        return implode('', $parsed);
     }
 }

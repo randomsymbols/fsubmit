@@ -4,7 +4,6 @@
     "homepage": "https://github.com/randomsymbols/fsubmit",
     "type": "library",
     "require": {
-        "pguardiario/phpuri": "^1.0",
         "ext-curl": "*",
         "ext-openssl": "*",
         "voku/simple_html_dom": "^4.7"
