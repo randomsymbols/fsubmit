@@ -5,5 +5,4 @@ exclude:
     - build
 extensions:
     - php
-cache: build/phplint.cache
 warning: false

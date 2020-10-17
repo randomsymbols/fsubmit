@@ -2,6 +2,8 @@
 
 namespace Fsubmit;
 
+use \InvalidArgumentException;
+use \RuntimeException;
 use voku\helper\HtmlDomParser;
 
 /**
@@ -88,6 +90,11 @@ final class Form
         array $id = ['type' => 'index', 'value' => 0],
         array $curlOpts = []
     ): Form {
+
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException("URL $url is not valid.");
+        }
+
         $response = self::httpRequest($url, $curlOpts);
         $form = self::parse($response['content'], $id, $response['headers']['url']);
 
@@ -145,7 +152,7 @@ final class Form
     private static function httpRequest(string $url, array $curlOpts): array
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException('Cannot send HTTP requiest, URL is not valid.');
+            throw new InvalidArgumentException("Cannot send HTTP requiest, URL $url is not valid.");
         }
 
         $curlHandle = curl_init($url);
@@ -321,15 +328,13 @@ final class Form
             return $action;
         }
 
-        $parsed = parse_url($url);
-        unset($parsed['query'], $parsed['fragment']);
-
-        if (0 === strpos($url, '/')) {
-            $parsed['query'] = $action;
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException("URL $url is not valid.");
         }
 
-        $parsed['query'] .= $action;
+        $parsed = parse_url($url);
+        $path = !isset($parsed['path']) || 0 === strpos($action, '/') ? $action : $parsed['path'].'/'.$action;
 
-        return implode('', $parsed);
+        return $parsed['scheme'].'://'.$parsed['host'].$path;
     }
 }
