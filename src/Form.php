@@ -183,6 +183,7 @@ final class Form
      */
     private static function parse(string $html, array $id, string $url = NULL): array
     {
+        // TODO: remove simple_html_dom dependency and replace the parser with https://www.php.net/manual/en/domdocument.loadhtml.php
         $dom = self::loadDom($html);
         $form = self::getForm($dom, $id);
         $action = self::parseAction($form, $url);

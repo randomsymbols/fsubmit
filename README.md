@@ -21,9 +21,8 @@ With [composer](https://en.wikipedia.org/wiki/Composer_(software)):
 composer require randomsymbols/fsubmit
 ```
 
-If installed manually, make sure you install the dependencies also:
+If installed manually, make sure you install the dependency also:
 1. [PHP Simple HTML DOM Parser](https://github.com/voku/simple_html_dom)
-2. [phpUri](https://github.com/monkeysuffrage/phpuri)
 
 Usage
 -----
