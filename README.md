@@ -1,5 +1,4 @@
-fsubmit
-==========================
+# fsubmit
 
 Have you ever tried to submit an HTML form with cUrl? You have to clearly state all the fields you submit and what values they have. 
 
@@ -13,19 +12,35 @@ It causes a lot of questions if you do not know how HTML forms work. For example
 
 An Internet browser does the job for us when we submit a form. We do not have to bother about hidden fields or any other fields at all. The library provides the same functionality for PHP.
 
-Install
--------
+## Requirements
 
-With [composer](https://en.wikipedia.org/wiki/Composer_(software)):
-```composer
+PHP 7.4 and later.
+
+## Composer
+
+You can install the bindings via [Composer](http://getcomposer.org/). Run the following command:
+
+```bash
 composer require randomsymbols/fsubmit
 ```
 
-If installed manually, make sure you install the dependency also:
-1. [PHP Simple HTML DOM Parser](https://github.com/voku/simple_html_dom)
+To use the bindings, use Composer's [autoload](https://getcomposer.org/doc/01-basic-usage.md#autoloading):
 
-Usage
------
+```php
+require_once('vendor/autoload.php');
+```
+
+## Dependencies
+
+The bindings require the following extensions in order to work properly:
+
+-   [`curl`](https://secure.php.net/manual/en/book.curl.php)
+-   [`openssl`](https://www.php.net/manual/en/openssl.installation.php)
+-   [`PHP Simple HTML DOM Parser`](https://github.com/voku/simple_html_dom)
+
+If you use Composer, these dependencies should be handled automatically. If you install manually, you'll want to make sure these extensions are available.
+
+## Getting Started
 
 ```php
 use Fsubmit\Form;
