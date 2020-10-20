@@ -18,13 +18,13 @@ PHP 7.4 and later.
 
 ## Composer
 
-You can install the bindings via [Composer](http://getcomposer.org/). Run the following command:
+You can install the library via [Composer](http://getcomposer.org/). Run the following command:
 
 ```bash
 composer require randomsymbols/fsubmit
 ```
 
-To use the bindings, use Composer's [autoload](https://getcomposer.org/doc/01-basic-usage.md#autoloading):
+To use the library, use composer's [autoload](https://getcomposer.org/doc/01-basic-usage.md#autoloading):
 
 ```php
 require_once('vendor/autoload.php');
@@ -32,13 +32,13 @@ require_once('vendor/autoload.php');
 
 ## Dependencies
 
-The bindings require the following extensions in order to work properly:
+The library requires the following extensions in order to work properly:
 
 -   [`curl`](https://secure.php.net/manual/en/book.curl.php)
 -   [`openssl`](https://www.php.net/manual/en/openssl.installation.php)
 -   [`PHP Simple HTML DOM Parser`](https://github.com/voku/simple_html_dom)
 
-If you use Composer, these dependencies should be handled automatically. If you install manually, you'll want to make sure these extensions are available.
+If you use Composer, these dependencies should be handled automatically. If you install manually, make sure these extensions are available.
 
 ## Getting Started
 
