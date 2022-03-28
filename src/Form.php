@@ -179,7 +179,7 @@ class Form
     /**
      * @throws FsubmitException
      */
-    private static function parse(string $html, array $id, string $url = NULL): array
+    private static function parse(string $html, array $id, string $url = null): array
     {
         // TODO: remove simple_html_dom dependency and replace the parser with https://www.php.net/manual/en/domdocument.loadhtml.php
         $dom = self::loadDom($html);
@@ -234,19 +234,28 @@ class Form
     /**
      * @throws FsubmitException
      */
-    private static function parseAction($form, string $url): string
+    private static function parseAction($form, ?string $url): string
     {
-        $action = $form->action ?? '';
-
-        if ('' === $action) {
-            return $url;
+        if (empty($form->action)) {
+            return self::getAbsoluteUrl($url);
         }
 
-        if (!$url && !filter_var($action, FILTER_VALIDATE_URL)) {
-            throw new FsubmitException('Cannot set form action, URL is not provided.');
+        if (!filter_var($form->action, FILTER_VALIDATE_URL)) {
+            return self::actionToUrl($form->action, self::getAbsoluteUrl($url));
         }
 
-        return filter_var($action, FILTER_VALIDATE_URL) ? $action : self::actionToUrl($action, $url);
+        return $form->action;
+    }
+
+    /**
+     * @throws FsubmitException
+     */
+    private static function getAbsoluteUrl(?string $url): string
+    {
+        return
+            filter_var($url, FILTER_VALIDATE_URL) ? $url :
+            throw new FsubmitException("$url is not an absolute URL.")
+        ;
     }
 
     private static function parseParams($form): array
