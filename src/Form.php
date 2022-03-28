@@ -344,7 +344,7 @@ class Form
         }
 
         $parsed = parse_url($url);
-        $path = !isset($parsed['path']) || 0 === strpos($action, '/') ? $action : $parsed['path'].'/'.$action;
+        $path = !isset($parsed['path']) || str_starts_with($action, '/') ? $action : $parsed['path'].'/'.$action;
 
         return $parsed['scheme'].'://'.$parsed['host'].$path;
     }
