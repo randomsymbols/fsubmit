@@ -252,7 +252,6 @@ class Form
     private static function parseParams($form): array
     {
         $params = [];
-        $elements = [];
 
         $elements = isset($form->id) && '' !== $form->id ?
             array_merge(
