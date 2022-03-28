@@ -11,7 +11,7 @@ use voku\helper\HtmlDomParser;
  * unused fields to submit are automatically added from the form.
  *
  */
-final class Form
+class Form
 {
     private const DEFAULT_CURL_OPTS = [
         CURLOPT_RETURNTRANSFER => 1, // Return the transfer as a string instead of printing it to output.
