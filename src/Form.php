@@ -2,8 +2,6 @@
 
 namespace Fsubmit;
 
-use \InvalidArgumentException;
-use \RuntimeException;
 use voku\helper\HtmlDomParser;
 
 /**
@@ -85,6 +83,9 @@ final class Form
         $this->params = $params;
     }
 
+    /**
+     * @throws FsubmitException
+     */
     public static function fromUrl(
         string $url,
         array $id = ['type' => 'index', 'value' => 0],
@@ -92,7 +93,7 @@ final class Form
     ): Form {
 
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException("URL $url is not valid.");
+            throw new FsubmitException("URL $url is not valid.");
         }
 
         $response = self::httpRequest($url, $curlOpts);
@@ -106,6 +107,9 @@ final class Form
         );
     }
 
+    /**
+     * @throws FsubmitException
+     */
     public static function fromHtml(
         string $html,
         array $id = ['type' => 'index', 'value' => 0]
@@ -121,8 +125,7 @@ final class Form
     }
 
     /**
-     * @param array $curlOpts
-     * @return array
+     * @throws FsubmitException
      */
     public function submit(array $curlOpts = []): array
     {
@@ -143,16 +146,12 @@ final class Form
     }
 
     /**
-     * @param string $url
-     * @param array $curlOpts
-     * @return array
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws FsubmitException
      */
     private static function httpRequest(string $url, array $curlOpts): array
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException("Cannot send HTTP requiest, URL $url is not valid.");
+            throw new FsubmitException("Cannot send HTTP request, URL $url is not valid.");
         }
 
         $curlHandle = curl_init($url);
@@ -164,9 +163,11 @@ final class Form
         curl_close($curlHandle);
 
         if ($errorMessage) {
-            throw new RuntimeException(
-                "Cannot send HTTP requiest, cUrl returned error: $errorMessage cUrl error number: $errorNumber.",
-            );
+            throw new FsubmitException(sprintf(
+                'Cannot send HTTP request, cUrl returned error: %s cUrl error number: %d.',
+                $errorMessage,
+                $errorNumber
+            ));
         }
 
         return [
@@ -176,10 +177,7 @@ final class Form
     }
 
     /**
-     * @param string $html
-     * @param array $id
-     * @param string|null $url
-     * @return array
+     * @throws FsubmitException
      */
     private static function parse(string $html, array $id, string $url = NULL): array
     {
@@ -199,17 +197,23 @@ final class Form
         ];
     }
 
+    /**
+     * @throws FsubmitException
+     */
     private static function loadDom(string $html): HtmlDomParser
     {
         $dom = HtmlDomParser::str_get_html($html);
 
         if (!$dom) {
-            throw new RuntimeException('Cannot load DOM, cannot parse HTML string to object.');
+            throw new FsubmitException('Cannot load DOM, cannot parse HTML string to object.');
         }
 
         return $dom;
     }
 
+    /**
+     * @throws FsubmitException
+     */
     private static function getForm(HtmlDomParser $dom, array $id)
     {
         if ('index' === $id['type']) {
@@ -221,12 +225,15 @@ final class Form
         }
 
         if (!isset($form)) {
-            throw new RuntimeException('Cannot get form from DOM, no form found in the provided HTML.');
+            throw new FsubmitException('Cannot get form from DOM, no form found in the provided HTML.');
         }
 
         return $form;
     }
 
+    /**
+     * @throws FsubmitException
+     */
     private static function parseAction($form, string $url): string
     {
         $action = $form->action ?? '';
@@ -236,7 +243,7 @@ final class Form
         }
 
         if (!$url && !filter_var($action, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException('Cannot set form action, URL is not provided.');
+            throw new FsubmitException('Cannot set form action, URL is not provided.');
         }
 
         return filter_var($action, FILTER_VALIDATE_URL) ? $action : self::actionToUrl($action, $url);
@@ -323,6 +330,9 @@ final class Form
         return $params;
     }
 
+    /**
+     * @throws FsubmitException
+     */
     private static function actionToUrl(string $action, string $url): string
     {
         if (filter_var($action, FILTER_VALIDATE_URL)) {
@@ -330,7 +340,7 @@ final class Form
         }
 
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new InvalidArgumentException("URL $url is not valid.");
+            throw new FsubmitException("URL $url is not valid.");
         }
 
         $parsed = parse_url($url);
