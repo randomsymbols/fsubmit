@@ -1,6 +1,7 @@
 {
     "name": "randomsymbols/fsubmit",
     "description": "Submit HTML forms from PHP",
+    "abandoned": "symfony/browser-kit",
     "homepage": "https://github.com/randomsymbols/fsubmit",
     "type": "library",
     "require": {
