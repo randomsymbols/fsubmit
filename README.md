@@ -1,5 +1,44 @@
 # fsubmit
 
+> **This library is no longer maintained.** Use [symfony/dom-crawler](https://symfony.com/doc/current/components/dom_crawler.html)
+> and [symfony/browser-kit](https://symfony.com/doc/current/components/browser_kit.html) instead.
+> They work standalone, without the Symfony framework, and parse and submit HTML forms the way a browser does.
+
+## Migrating
+
+Fetch the page, fill in the fields you care about and submit the form; everything else is taken from the form as is:
+
+```php
+use Symfony\Component\BrowserKit\HttpBrowser;
+
+$browser = new HttpBrowser();
+$crawler = $browser->request('GET', 'https://www.google.com');
+$form = $crawler->filter('form')->form(['q' => 'John 3:16']);
+$browser->submit($form);
+echo $browser->getResponse()->getContent();
+```
+
+```bash
+composer require symfony/browser-kit symfony/http-client symfony/css-selector
+```
+
+If you prefer to send the request with your own HTTP client, use `symfony/dom-crawler` alone:
+
+```php
+use Symfony\Component\DomCrawler\Crawler;
+
+$crawler = new Crawler($html, 'https://www.google.com');
+$form = $crawler->filter('form')->form(['q' => 'John 3:16']);
+
+$form->getMethod();    // GET
+$form->getUri();       // absolute action URL, with the query string for GET forms
+$form->getPhpValues(); // fields to send in the body for POST forms
+```
+
+The original documentation is kept below for reference.
+
+---
+
 Have you ever tried to submit an HTML form with cUrl?
 You have to clearly state all the fields you submit and what values they have. 
 
