@@ -1,8 +1,0 @@
-path: ./
-jobs: 10
-exclude:
-    - vendor
-    - build
-extensions:
-    - php
-warning: false

@@ -2,3 +2,5 @@
 /.idea/
 /build/
 /.phplint.cache
+/composer.lock
+/.phpunit.result.cache
